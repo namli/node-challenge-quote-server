@@ -3,7 +3,10 @@
 
 //load the 'express' module which makes writing webservers easy
 const express = require("express");
+const lodash = require('lodash');
+var cors = require('cors');
 const app = express();
+app.use(cors());
 
 //load the quotes JSON
 const quotes = require("./quotes.json");
@@ -17,6 +20,29 @@ app.get("/", function (request, response) {
 });
 
 //START OF YOUR CODE...
+app.get("/quotes", function (request, response) {
+  response.send(quotes);
+});
+
+app.get("/quotes/random", function (request, response) {
+  response.send(lodash.sample(quotes));
+});
+
+app.get("/search", function (request, response) {
+  let word = request.query.term;
+  response.send(search(word, quotes));
+});
+
+const search = (term, arr) => {
+  return (
+    arr.filter((item) => {
+      if (item.quote.includes(term)) {
+        return true;
+      }
+    })
+  );
+}
+
 
 //...END OF YOUR CODE
 
@@ -29,6 +55,7 @@ function pickFromArray(arr) {
 }
 
 //Start our server so that it listens for HTTP requests!
-const listener = app.listen(process.env.PORT, function () {
+// const listener = app.listen(process.env.PORT, function () {
+const listener = app.listen(55169, function () {
   console.log("Your app is listening on port " + listener.address().port);
 });
